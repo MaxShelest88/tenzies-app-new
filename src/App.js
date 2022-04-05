@@ -5,6 +5,8 @@ import { nanoid } from 'nanoid'
 import GameButton from "./components/UI/button/GameButton";
 import Confetti from 'react-confetti'
 import NameInput from "./components/UI/input/NameInput";
+import GameStats from "./components/GameStats";
+import GameInfo from "./components/GameInfo";
 
 function App() {
 
@@ -18,17 +20,16 @@ function App() {
 		time: 0
 	})
 
-	
-
 	const [bestUser, setBestUser] = useState(
-		JSON.parse(localStorage.getItem("user")) || {}
+		JSON.parse(localStorage.getItem("user")) || {name: '',
+			rolls: 0,
+			time: 0}
 	)
 
 	const [intervalId, setIntervalId] = useState(0);
 
 
 	useEffect(() => {
-		console.log(user.time)
 		const allHeld = dice.every(die => die.isHeld)
 		const firstDieValue = dice[0].value
 		const allDiceSameValue = dice.every(die => die.value === firstDieValue)
@@ -47,7 +48,7 @@ function App() {
 		}
 	}, [dice, user, bestUser, intervalId])
 
-	function genereateRandomNum(min, max) {
+	function generateRandomNum(min, max) {
 		min = Math.ceil(min);
 		max = Math.floor(max);
 		return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -55,17 +56,12 @@ function App() {
 
 	function generateNewDie() {
 		return {
-			value: genereateRandomNum(1, 6),
+			value: generateRandomNum(1, 6),
 			isHeld: false,
 			id: nanoid()
 		}
 	}
 
-	useEffect(() => {
-		setBestUser(
-			JSON.parse(localStorage.getItem("user"))
-		)
-	},[])
 
 	function generateAllNewDice() {
 		const newDice = []
@@ -108,7 +104,6 @@ function App() {
 				startTimer()
 			}
 		}
-		
 	}
 
 	function holdDie(id) {
@@ -134,13 +129,12 @@ function App() {
 		time={user}
 	/>)
 
-
 	return (
 		<main>
 			{tenzies && <Confetti />}
 			<div className="game">
 				<div className="game__block">
-					<div className="game__contaner">
+					<div className="game__container">
 						<NameInput
 							value={user.name}
 							handleChange={handleChange}
@@ -151,25 +145,11 @@ function App() {
 						<GameButton rollDice={rollDice}>
 							{tenzies ? "Новая игра" : "Бросок"}
 						</GameButton>
-						<div className="game__info">
-							<h3>
-								Имя: {user.name}
-							</h3>
-							<h3 className="rolls-number">
-								Броски: {user.rolls}
-							</h3>
-							<h3>
-								Время: {user.time}
-							</h3>
+						<GameInfo name={user.name} rolls={user.rolls} time={user.time}/>
 						</div>
-					</div>
-					<div className="game__stats">
-						<h2>Tenzies</h2>
-						<div>Бросай, пока все кубики не станут одинаковыми. Нажимай на каждый кубик, что бы запомнить текущее значение между бросками.</div>
-						Лучший игрок : <br />имя: {bestUser.name} время: {bestUser.time} броски: {bestUser.rolls}
-					</div>
+					<GameStats name={bestUser.name} rolls={bestUser.rolls} time={bestUser.time}/>
 				</div>
-				
+
 			</div>
 		</main>
 	);

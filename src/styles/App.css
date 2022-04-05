@@ -32,7 +32,7 @@ body {
 	margin-bottom: 20px;
 }
 
-.game__contaner {
+.game__container {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -41,8 +41,14 @@ body {
 
 .game__stats {
 	display: flex;
-	justify-content: center;
-	align-items: center;
 	flex-direction: column;
 	padding: 20px;
+}
+
+.game__about{
+	margin-bottom: 10px;
+}
+
+.game__best{
+	font-weight: 600;
 }
