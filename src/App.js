@@ -149,7 +149,7 @@ function App() {
 							{diceElements}
 						</div>
 						<GameButton rollDice={rollDice}>
-							{tenzies ? "New Game" : "Roll"}
+							{tenzies ? "Новая игра" : "Бросок"}
 						</GameButton>
 						<div className="game__info">
 							<h3>
@@ -164,6 +164,8 @@ function App() {
 						</div>
 					</div>
 					<div className="game__stats">
+						<h2>Tenzies</h2>
+						<div>Бросай, пока все кубики не станут одинаковыми. Нажимай на каждый кубик, что бы запомнить текущее значение между бросками.</div>
 						Лучший игрок : <br />имя: {bestUser.name} время: {bestUser.time} броски: {bestUser.rolls}
 					</div>
 				</div>
