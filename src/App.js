@@ -7,6 +7,7 @@ import Confetti from 'react-confetti'
 import NameInput from "./components/UI/input/NameInput";
 import GameStats from "./components/GameStats";
 import GameInfo from "./components/GameInfo";
+import Modal from "./components/UI/Modal/Modal";
 
 function App() {
 
@@ -15,7 +16,7 @@ function App() {
 	const [tenzies, setTenzies] = useState(false)
 
 	const [user, setUser] = useState({
-		name: '',
+		name: 'noname',
 		rolls: 0,
 		time: 0
 	})
@@ -28,6 +29,8 @@ function App() {
 
 	const [intervalId, setIntervalId] = useState(0);
 
+	const [modal, setModal] = useState(false)
+
 
 	useEffect(() => {
 		const allHeld = dice.every(die => die.isHeld)
@@ -35,16 +38,12 @@ function App() {
 		const allDiceSameValue = dice.every(die => die.value === firstDieValue)
 		if (allHeld && allDiceSameValue) {
 			setTenzies(true)
-			console.log('You Win!');
-			if (bestUser < user.time && bestUser) {
-				localStorage.setItem("user", JSON.stringify(user))
-			} else {
-				localStorage.setItem("user", JSON.stringify(user))
-			}
+			setModal(true)
 			if (intervalId) {
 				clearInterval(intervalId);
 				setIntervalId(0);
 			}
+				localStorage.setItem("user", JSON.stringify(user))
 		}
 	}, [dice, user, bestUser, intervalId])
 
@@ -62,19 +61,12 @@ function App() {
 		}
 	}
 
-
 	function generateAllNewDice() {
 		const newDice = []
 		for (let i = 0; i < 10; i++) {
 			newDice.push(generateNewDie())
 		}
 		return newDice
-	}
-
-	function getBestUser() {
-		setBestUser(
-			JSON.parse(localStorage.getItem("user"))
-		)
 	}
 
 	function startTimer() {
@@ -86,13 +78,11 @@ function App() {
 		setIntervalId(newIntervalId)
 	}
 
-
 	function rollDice() {
 		if (tenzies) {
 			setDice(generateAllNewDice)
 			setTenzies(false)
 			setUser(oldUser => { return { ...oldUser, time: 0, rolls: 0 } })
-			getBestUser()
 		} else {
 			setDice(oldDice => oldDice.map(die => {
 				return die.isHeld ? die : generateNewDie()
@@ -149,8 +139,10 @@ function App() {
 						</div>
 					<GameStats name={bestUser.name} rolls={bestUser.rolls} time={bestUser.time}/>
 				</div>
-
 			</div>
+			<Modal visible={modal} setVisible={setModal} >
+				{user.name}, Вы победили!
+			</Modal>
 		</main>
 	);
 }
