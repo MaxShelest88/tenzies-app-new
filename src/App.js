@@ -22,9 +22,11 @@ function App() {
 	})
 
 	const [bestUser, setBestUser] = useState(
-		JSON.parse(localStorage.getItem("user")) || {name: '',
+		JSON.parse(localStorage.getItem("user")) || {
+			name: '',
 			rolls: 0,
-			time: 0}
+			time: 0
+		}
 	)
 
 	const [intervalId, setIntervalId] = useState(0);
@@ -43,9 +45,18 @@ function App() {
 				clearInterval(intervalId);
 				setIntervalId(0);
 			}
-				localStorage.setItem("user", JSON.stringify(user))
 		}
 	}, [dice, user, bestUser, intervalId])
+
+	useEffect(() => {
+		if (tenzies && !localStorage.getItem("user")) {
+			localStorage.setItem("user", JSON.stringify(user))
+		}
+		if (tenzies && user.time < bestUser.time) {
+			localStorage.setItem("user", JSON.stringify(user))
+		}
+	}, [tenzies, user, bestUser])
+
 
 	function generateRandomNum(min, max) {
 		min = Math.ceil(min);
@@ -71,9 +82,9 @@ function App() {
 
 	function startTimer() {
 		const newIntervalId = setInterval(() => {
-				setUser(oldUser => {
-					return { ...oldUser, time: oldUser.time + 1 }
-				})
+			setUser(oldUser => {
+				return { ...oldUser, time: oldUser.time + 1 }
+			})
 		}, 1000);
 		setIntervalId(newIntervalId)
 	}
@@ -83,6 +94,9 @@ function App() {
 			setDice(generateAllNewDice)
 			setTenzies(false)
 			setUser(oldUser => { return { ...oldUser, time: 0, rolls: 0 } })
+			if (localStorage.getItem("user")) {
+				setBestUser(JSON.parse(localStorage.getItem("user")))
+			}
 		} else {
 			setDice(oldDice => oldDice.map(die => {
 				return die.isHeld ? die : generateNewDie()
@@ -107,7 +121,7 @@ function App() {
 
 	function handleChange(event) {
 		setUser(oldUser => {
-			return {...oldUser, name:event.target.value}
+			return { ...oldUser, name: event.target.value }
 		})
 	}
 
@@ -135,9 +149,9 @@ function App() {
 						<GameButton rollDice={rollDice}>
 							{tenzies ? "Новая игра" : "Бросок"}
 						</GameButton>
-						<GameInfo name={user.name} rolls={user.rolls} time={user.time}/>
-						</div>
-					<GameStats name={bestUser.name} rolls={bestUser.rolls} time={bestUser.time}/>
+						<GameInfo name={user.name} rolls={user.rolls} time={user.time} />
+					</div>
+					<GameStats name={bestUser.name} rolls={bestUser.rolls} time={bestUser.time} />
 				</div>
 			</div>
 			<Modal visible={modal} setVisible={setModal} >
